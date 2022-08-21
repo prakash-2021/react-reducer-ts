@@ -7,7 +7,16 @@ interface productType {
   quantity: number;
 }
 
-const orderProduct = (product: productType[]) => {
+interface productTypes {
+  buyerInfo: {
+    name: string;
+    email: string;
+    phone: string;
+  };
+  product: productType[];
+}
+
+const orderProduct = (product: productTypes) => {
   return { type: ORDER_PRODUCT, product };
 };
 

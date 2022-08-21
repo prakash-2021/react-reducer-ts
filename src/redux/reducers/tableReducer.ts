@@ -1,4 +1,9 @@
-import { INITIALIZE_DATA, ADD_PRODUCT, EDIT_PRODUCT } from "../action/types";
+import {
+  INITIALIZE_DATA,
+  ADD_PRODUCT,
+  EDIT_PRODUCT,
+  MANAGE_QUANTITY,
+} from "../action/types";
 
 const initialState: { products: any[] } = {
   products: [],
@@ -25,6 +30,11 @@ const initializeProduct = (state = initialState, action: any) => {
       return {
         ...state,
         products: [...state.products],
+      };
+    case MANAGE_QUANTITY:
+      return {
+        ...state,
+        products: [...state.products, action.product],
       };
     default:
       return state;

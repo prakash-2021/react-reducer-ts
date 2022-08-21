@@ -188,15 +188,19 @@ tr:nth-child(even) {
 }
 
 .orders {
-  display: flex;
-  justify-content: space-evenly;
-  flex-wrap: wrap;
   padding: 1em;
   width: 100%;
 }
 
-.order-info{
-  border: 1px solid gray;
+.order-info {
   height: fit-content;
-  padding: .4em;
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  gap: 1em;
+}
+
+.border-1{
+  border: 1px solid gray;
+  padding: 10px;
 }

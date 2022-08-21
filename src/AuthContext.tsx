@@ -12,7 +12,8 @@ const authContextDefault: AuthContextInterface = {
   login: () => false,
   logout: () => false,
 };
-export const AuthContext = createContext<AuthContextInterface>(authContextDefault);
+export const AuthContext =
+  createContext<AuthContextInterface>(authContextDefault);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const dispatch = useDispatch();
@@ -23,10 +24,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     // setLoggedIn((loggedIn = JSON.parse(localStorage.getItem("isLogin"))));
-    const tableInformation = JSON.parse(
-      localStorage.getItem("storedData") || "{}"
+    let tableInformation = JSON.parse(
+      localStorage.getItem("storedData") || "[]"
     );
-    dispatch(initializeProduct(tableInformation || []));
+
+    if (tableInformation === {}) {
+      tableInformation = [];
+      dispatch(initializeProduct(tableInformation));
+    } else dispatch(initializeProduct(tableInformation));
   }, []);
 
   return (

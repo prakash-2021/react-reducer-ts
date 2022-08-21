@@ -3,27 +3,53 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useState } from "react";
 
+type productsType = {
+  buyerInfo: {
+    name: string;
+    email: string;
+    phone: string;
+  };
+  product: {
+    id: string;
+    name: string;
+    price: string;
+    quantity: number;
+  }[];
+};
+
+type tableRowType = {
+  id: string;
+  name: string;
+  price: string;
+  quantity: number;
+};
+
 const Products = () => {
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
   const handleAddProduct = () => navigate("/product/add");
 
-  const handleEditProduct = (id: number) => {
+  const handleEditProduct = (id: string) => {
     navigate(`/product/${id}/edit`);
   };
-  const handleViewProduct = (id: number) => {
+
+  const handleViewProduct = (id: string) => {
     navigate(`/product/${id}/view`);
   };
-  type tableRowType = {
-    id: number;
-    name: number;
-    price: number;
-    quantity: number;
-  };
+
   const tableInfo = useSelector(
     (state: { initializeProduct: { products: [] } }) =>
       state.initializeProduct.products
   );
+
+  // const orderProduct = useSelector(
+  //   (state: {
+  //     orderProducts: {
+  //       products: productsType[];
+  //     };
+  //   }) => state.orderProducts.products
+  // );
+
   const addTableRows = tableInfo
     .filter((value: any) => {
       return value.name.toLowerCase().includes(searchValue.toLocaleLowerCase());
@@ -50,7 +76,6 @@ const Products = () => {
         </td>
       </tr>
     ));
-
 
   if (tableInfo.length !== 0) {
     localStorage.setItem("storedData", JSON.stringify(tableInfo));

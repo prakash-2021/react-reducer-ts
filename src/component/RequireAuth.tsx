@@ -6,7 +6,7 @@ export const RequireAuth = ({ children }: { children?: ReactNode }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (JSON.parse(localStorage.getItem("profile") || "{}") === null) {
+    if (JSON.parse(localStorage.getItem("profile") || "[]").length === 0) {
       navigate("/login");
     }
   }, []);

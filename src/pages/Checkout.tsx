@@ -50,11 +50,14 @@ const Checkout = () => {
       setMessage("please fill your details");
     } else {
       const buyerInfo = { name, email, phone };
-      localStorage.setItem("buyerInfo", JSON.stringify(buyerInfo));
       localStorage.setItem("selectedProduct", JSON.stringify([]));
       localStorage.setItem("totalQuantity", JSON.stringify(0));
       dispatch(increaseQuantity([]));
-      dispatch(orderProduct(selectedProductsToCart));
+      const totalInformation = {
+        buyerInfo,
+        product: selectedProductsToCart,
+      };
+      dispatch(orderProduct(totalInformation));
       navigate("/stock");
       alert("Ordered Successfully");
     }
