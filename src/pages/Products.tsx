@@ -37,20 +37,34 @@ const Products = () => {
     navigate(`/product/${id}/view`);
   };
 
-  const tableInfo = useSelector(
+  // stock ma vako array of object
+  const stockProduct = useSelector(
     (state: { initializeProduct: { products: [] } }) =>
       state.initializeProduct.products
   );
 
-  // const orderProduct = useSelector(
-  //   (state: {
-  //     orderProducts: {
-  //       products: productsType[];
-  //     };
-  //   }) => state.orderProducts.products
+  // order gareko array of object
+  const orderProduct = useSelector(
+    (state: {
+      orderProducts: {
+        products: productsType[];
+      };
+    }) => state.orderProducts.products
+  );
+  // console.log("orderProduct ->", orderProduct);
+
+  // const index: number;
+  // const updatedQuantityProducts = orderProduct.map((obj) =>
+  //   obj.product.map((object) => {
+  //     stockProduct.filter((prod: tableRowType) => prod.id === object.id);
+  //   })
   // );
 
-  const addTableRows = tableInfo
+  // const 
+
+  // console.log("updatedQuantiy ->", updatedQuantityProducts);
+
+  const addTableRows = stockProduct
     .filter((value: any) => {
       return value.name.toLowerCase().includes(searchValue.toLocaleLowerCase());
     })
@@ -77,8 +91,8 @@ const Products = () => {
       </tr>
     ));
 
-  if (tableInfo.length !== 0) {
-    localStorage.setItem("storedData", JSON.stringify(tableInfo));
+  if (stockProduct.length !== 0) {
+    localStorage.setItem("storedData", JSON.stringify(stockProduct));
   }
 
   return (

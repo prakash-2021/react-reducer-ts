@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { increaseQuantity } from "../redux/action/cart";
 import { useDispatch } from "react-redux";
 import orderProduct from "../redux/action/orederAction";
+import { editedProduct } from "../redux/action/products";
 
 type productsType = {
   id: string;
@@ -20,6 +21,7 @@ const Checkout = () => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
+  const [stockMessage, setStockMessage] = useState("");
 
   const selectedProductsToCart = useSelector(
     (state: {
@@ -29,6 +31,14 @@ const Checkout = () => {
       };
     }) => state.productsInCart.products
   );
+
+  const stockProduct = useSelector(
+    (state: { initializeProduct: { products: [] } }) =>
+      state.initializeProduct.products
+  );
+
+  // console.log("stockProduct", stockProduct);
+  // console.log("selectedproduct", selectedProductsToCart);
 
   const totalPrice = useSelector(
     (state: {
@@ -46,8 +56,28 @@ const Checkout = () => {
   };
 
   const handleOrder = () => {
+    const updatedQuantityProduct = stockProduct.map((obj: productsType) => {
+      if (obj.id === selectedProductsToCart[0].id) {
+        if (obj.quantity < selectedProductsToCart[0].quantity) {
+          console.log(obj.quantity, selectedProductsToCart[0].quantity);
+          setStockMessage("out of stock");
+        } else {
+          setStockMessage("");
+          return (obj.quantity -= selectedProductsToCart[0].quantity);
+        }
+      } else {
+        return obj;
+      }
+    });
+
+    if (!updatedQuantityProduct.includes(undefined)) {
+      dispatch(editedProduct(updatedQuantityProduct));
+    }
+
     if (name === "" || phone === "" || !validateEmail(email)) {
       setMessage("please fill your details");
+    } else if (stockMessage !== "") {
+      setStockMessage("out of stock");
     } else {
       const buyerInfo = { name, email, phone };
       localStorage.setItem("selectedProduct", JSON.stringify([]));
@@ -109,6 +139,9 @@ const Checkout = () => {
       <button className="btn--primary order" onClick={handleOrder}>
         <span>Order</span>
       </button>
+      <p className="color-red text-center">
+        <i>{stockMessage}</i>
+      </p>
     </>
   );
 };

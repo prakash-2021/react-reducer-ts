@@ -14,12 +14,13 @@ const Login = () => {
   const storedProfile: {
     username: string;
     password: string;
-  } = JSON.parse(localStorage.getItem("profile") || '{}');
-
-  console.log(storedProfile)
+  } = JSON.parse(localStorage.getItem("profile") || "{}");
 
   const handleLogin = () => {
-    if (storedProfile.username === null || storedProfile.username === undefined) {
+    if (
+      storedProfile.username === null ||
+      storedProfile.username === undefined
+    ) {
       const profile = { username, password };
       localStorage.setItem("profile", JSON.stringify(profile));
       return navigate("/");
@@ -31,9 +32,7 @@ const Login = () => {
       // login();
       return navigate("/");
     } else {
-      setErrorMessage(
-        (prev) => (prev = "please type correct username and password")
-      );
+      setErrorMessage("please type correct username and password");
     }
   };
 
