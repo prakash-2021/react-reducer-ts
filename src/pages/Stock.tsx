@@ -16,24 +16,18 @@ const Stock = () => {
   const dispatch = useAppDispatch();
 
   const handleLogin = () => navigate("/login");
-  const prevProductsInCart = JSON.parse(
-    localStorage.getItem("selectedProduct") || "[]"
-  );
-
-  // const currentProduct = useSelector(
-  //   (state: {
-  //     productsInCart: {
-  //       products: productsType[];
-  //     };
-  //   }) => state.productsInCart.products
+  // const prevProductsInCart = JSON.parse(
+  //   localStorage.getItem("selectedProduct") || "[]"
   // );
 
-  const currentProduct = useAppSelector((state) => state.cartSlice.products);
+  const selectedProductsToCart = useAppSelector(
+    (state) => state.cartSlice.products
+  );
 
-  const selectedProductsToCart = currentProduct;
+  // const selectedProductsToCart = currentProduct;
 
-  const totalNum = JSON.parse(localStorage.getItem("totalQuantity") || "0");
-  let [totalQuantity, setTotalQuantity] = useState(totalNum);
+  // const totalNum = JSON.parse(localStorage.getItem("totalQuantity") || "0");
+  let [totalQuantity, setTotalQuantity] = useState(0);
 
   const handleViewCart = () => {
     navigate("/stock/viewcart");
@@ -57,15 +51,20 @@ const Stock = () => {
     if (index === -1) {
       dispatch(addToCart(product));
     } else {
-      selectedProductsToCart[index].quantity += 1;
-      // dispatch(increaseQuantity(selectedProductsToCart));
+      // const newData = selectedProductsToCart[index].quantity + 1;
+      dispatch(increaseQuantity(index));
     }
   };
 
-  // const availableProducts = useSelector(
-  //   (state: { initializeProduct: { products: [] } }) =>
-  //     state.initializeProduct.products
-  // );
+  useEffect(() => {
+    setTotalQuantity(
+      selectedProductsToCart
+        .map((item) => item.quantity)
+        .reduce((accumulator, value) => {
+          return accumulator + value;
+        }, 0)
+    );
+  }, [selectedProductsToCart]);
 
   const availableProducts = useAppSelector(
     (state) => state.productSlice.products
@@ -84,11 +83,11 @@ const Stock = () => {
     </div>
   ));
 
-  // const [sum, setSum] = useState(
-  //   selectedProductsToCart.forEach((e)=>e.quantity.reduce((accumulator, value) => {
+  // setSum(
+  //   totalPrice.reduce((accumulator, value) => {
   //     return accumulator + value;
   //   }, 0)
-  // ));
+  // );
 
   return (
     <>

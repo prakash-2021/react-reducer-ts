@@ -11,11 +11,6 @@ const EditProduct = () => {
 
   const { id } = useParams();
 
-  // const products = useSelector(
-  //   (state: { initializeProduct: { products: any } }) =>
-  //     state.initializeProduct.products
-  // );
-
   const products = useAppSelector(state=>state.productSlice.products)
 
   type Product = {

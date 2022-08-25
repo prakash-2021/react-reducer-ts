@@ -4,8 +4,8 @@ import { useAppSelector, useAppDispatch } from "../redux/store/hooks";
 import { useNavigate } from "react-router-dom";
 // import { useDispatch } from "react-redux";
 import { orderProduct } from "../redux/slice/orderSlice";
-import { editProduct } from "../redux/slice/productSlice";
-import { increaseQuantity } from "../redux/slice/cartSlice";
+import { decreaseQuantity, editProduct } from "../redux/slice/productSlice";
+import { checkOutProduct, increaseQuantity } from "../redux/slice/cartSlice";
 import { useSelector } from "react-redux";
 
 type productsType = {
@@ -24,40 +24,13 @@ const Checkout = () => {
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [stockMessage, setStockMessage] = useState("");
+  const [isnotEnough, setIsnotEnough] = useState(false);
 
-  // const selectedProductsToCart = useSelector(
-  //   (state: {
-  //     productsInCart: {
-  //       products: productsType[];
-  //       total: number;
-  //     };
-  //   }) => state.productsInCart.products
-  // );
-
-  const selectedProductsToCart = useAppSelector(
-    (state) => state.cartSlice.products
+  const { products: cartProducts, total: totalPrice } = useAppSelector(
+    (state) => state.cartSlice
   );
 
-  // const stockProduct = useSelector(
-  // (state: { initializeProduct: { products: [] } }) =>
-  // state.initializeProduct.products
-  // );
-
   const stockProduct = useAppSelector((state) => state.productSlice.products);
-
-  // console.log("stockProduct", stockProduct);
-  // console.log("selectedproduct", selectedProductsToCart);
-
-  // const totalPrice = useSelector(
-  // (state: {
-  // productsInCart: {
-  // products: productsType[];
-  // total: number;
-  // };
-  // }) => state.productsInCart.total
-  // );
-
-  const totalPrice = useAppSelector((state) => state.cartSlice.total);
 
   const validateEmail = (email: string) => {
     return email.match(
@@ -65,15 +38,21 @@ const Checkout = () => {
     );
   };
 
+  useEffect(() => {
+    if (stockMessage !== "") setIsnotEnough(true);
+  }, [setStockMessage]);
+
   const handleOrder = () => {
+    // decrease quantity count of above ordered items from stock
+
     const updatedQuantityProduct = stockProduct.map((obj: productsType) => {
-      if (obj.id === selectedProductsToCart[0].id) {
-        if (obj.quantity < selectedProductsToCart[0].quantity) {
-          console.log(obj.quantity, selectedProductsToCart[0].quantity);
+      if (obj.id === cartProducts[0].id) {
+        if (obj.quantity < cartProducts[0].quantity) {
           setStockMessage("out of stock");
         } else {
           setStockMessage("");
-          return (obj.quantity -= selectedProductsToCart[0].quantity);
+          const data = { id: obj.id, quantity: cartProducts[0].quantity };
+          dispatch(decreaseQuantity(data));
         }
       } else {
         return obj;
@@ -84,18 +63,20 @@ const Checkout = () => {
       dispatch(editProduct(updatedQuantityProduct));
     }
 
-    if (name === "" || phone === "" || !validateEmail(email)) {
-      setMessage("please fill your details");
-    } else if (stockMessage !== "") {
+    // save new customer order in store
+
+    if (isnotEnough === true) {
       setStockMessage("out of stock");
+    } else if (name === "" || phone === "" || !validateEmail(email)) {
+      setMessage("please fill your details");
     } else {
       const buyerInfo = { name, email, phone };
       localStorage.setItem("selectedProduct", JSON.stringify([]));
       localStorage.setItem("totalQuantity", JSON.stringify(0));
-      // dispatch(increaseQuantity([]));
+      dispatch(checkOutProduct([]));
       const totalInformation = {
         buyerInfo,
-        product: selectedProductsToCart,
+        product: cartProducts,
       };
       dispatch(orderProduct(totalInformation));
       navigate("/stock");
@@ -140,7 +121,7 @@ const Checkout = () => {
           </div>
           <h5 className="mt-20">Items</h5>
           <>
-            {selectedProductsToCart.map((obj: productsType) => (
+            {cartProducts.map((obj: productsType) => (
               <p key={obj.id}>
                 {obj.name} ({obj.quantity}) Rs. {obj.price}
               </p>
@@ -159,6 +140,3 @@ const Checkout = () => {
 };
 
 export default Checkout;
-// function dispatch(arg0: any) {
-//   throw new Error("Function not implemented.");
-// }

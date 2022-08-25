@@ -1,24 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface actionType {
-  product: {
-    id: string;
-    name: string;
-    quantity: number;
-  };
-  total: number;
-  id: string;
-}
-
-type productsType = {
+type ProductsType = {
   id: string;
   name: string;
   price: string;
   quantity: number;
-  total: number;
 };
 
-interface product {
+interface Product {
   id: string;
   name: string;
   quantity: number;
@@ -37,19 +26,25 @@ const productsInCartSlice = createSlice({
   name: "productsInCartSlice",
   initialState,
   reducers: {
-    addToCart: (state, action: PayloadAction<product>) => {
+    addToCart: (state, action: PayloadAction<Product>) => {
       state.products = [...state.products, action.payload];
+      localStorage.setItem("selectedProduct", JSON.stringify(state.products));
     },
-    checkOutProduct: (state, action: PayloadAction<productsType[]>) => {
-      state.products = [action.payload];
-      // state.total = action.payload[0].total;
+    checkOutProduct: (state, action: PayloadAction<ProductsType[]>) => {
+      state.products = [...action.payload];
+      localStorage.setItem("selectedProduct", JSON.stringify(state.products));
     },
-    increaseQuantity: (state, action: PayloadAction<actionType>) => {
-      state.products = [action.payload.product];
+    totalQuantity: (state, action: PayloadAction<number>) => {
+      state.total = action.payload;
+      localStorage.setItem("selectedProduct", JSON.stringify(state.products));
+    },
+    increaseQuantity: (state, action: PayloadAction<number>) => {
+      state.products[action.payload].quantity += 1;
+      localStorage.setItem("selectedProduct", JSON.stringify(state.products));
     },
   },
 });
 
 export default productsInCartSlice.reducer;
-export const { addToCart, checkOutProduct, increaseQuantity } =
+export const { addToCart, checkOutProduct, increaseQuantity, totalQuantity } =
   productsInCartSlice.actions;

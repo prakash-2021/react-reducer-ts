@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../redux/store/hooks";
-import { checkOutProduct, increaseQuantity } from "../redux/slice/cartSlice";
+import {
+  checkOutProduct,
+  increaseQuantity,
+  totalQuantity,
+} from "../redux/slice/cartSlice";
 
 type productsType = {
   id: string;
@@ -14,15 +18,6 @@ type productsType = {
 const ViewCart = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
-  // const selectedProductsToCart = useSelector(
-  //   (state: {
-  //     productsInCart: {
-  //       products: productsType[];
-  //     };
-  //   }) => state.productsInCart.products
-  // );
-
   const selectedProductsToCart = useAppSelector(
     (state) => state.cartSlice.products
   );
@@ -30,7 +25,6 @@ const ViewCart = () => {
   let [productsOfCart, setProductsOfCart] = useState(selectedProductsToCart);
 
   const handleCheckout = () => {
-    // dispatch(increaseQuantity(productsOfCart));
     navigate("/stock/viewcart/checkout");
   };
 
@@ -67,6 +61,10 @@ const ViewCart = () => {
       return accumulator + value;
     }, 0)
   );
+
+  useEffect(() => {
+    dispatch(totalQuantity(sum));
+  }, [totalPrice]);
 
   useEffect(() => {
     setTotalPrice(

@@ -21,9 +21,19 @@ const initializeProductSlice = createSlice({
       state.products[index] = action.payload;
       state.products = state.products;
     },
+    decreaseQuantity: (
+      state,
+      action: PayloadAction<{ id: string; quantity: number }>
+    ) => {
+      const index = state.products.findIndex(
+        (obj: { id: string }) => obj.id === action.payload.id
+      );
+      state.products[index].quantity -= action.payload.quantity;
+      state.products = state.products;
+    },
   },
 });
 
 export default initializeProductSlice.reducer;
-export const { initializeProduct, addProduct, editProduct } =
+export const { initializeProduct, addProduct, editProduct, decreaseQuantity } =
   initializeProductSlice.actions;
