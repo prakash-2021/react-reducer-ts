@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { addProuct } from "../redux/action/products";
+import { addProduct } from "../redux/slice/productSlice";
 
 const AddProducts = () => {
   const [id, setId] = useState("");
@@ -25,7 +25,7 @@ const AddProducts = () => {
       setMessage("please input all field properly");
     } else {
       const newTableData = { id, name, price, quantity, image };
-      dispatch(addProuct(newTableData));
+      dispatch(addProduct(newTableData));
       navigate("/product");
     }
   };

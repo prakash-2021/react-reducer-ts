@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { addToCart, increaseQuantity } from "../redux/action/cart";
-import productsInCart from "../redux/reducers/cartReducer";
+import { addToCart, increaseQuantity } from "../redux/slice/cartSlice";
+import { useAppSelector, useAppDispatch } from "../redux/store/hooks";
 
 type productsType = {
   id: string;
@@ -15,20 +13,22 @@ type productsType = {
 
 const Stock = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const handleLogin = () => navigate("/login");
   const prevProductsInCart = JSON.parse(
     localStorage.getItem("selectedProduct") || "[]"
   );
 
-  const currentProduct = useSelector(
-    (state: {
-      productsInCart: {
-        products: productsType[];
-      };
-    }) => state.productsInCart.products
-  );
+  // const currentProduct = useSelector(
+  //   (state: {
+  //     productsInCart: {
+  //       products: productsType[];
+  //     };
+  //   }) => state.productsInCart.products
+  // );
+
+  const currentProduct = useAppSelector((state) => state.cartSlice.products);
 
   const selectedProductsToCart = currentProduct;
 
@@ -58,13 +58,17 @@ const Stock = () => {
       dispatch(addToCart(product));
     } else {
       selectedProductsToCart[index].quantity += 1;
-      dispatch(increaseQuantity(selectedProductsToCart));
+      // dispatch(increaseQuantity(selectedProductsToCart));
     }
   };
 
-  const availableProducts = useSelector(
-    (state: { initializeProduct: { products: [] } }) =>
-      state.initializeProduct.products
+  // const availableProducts = useSelector(
+  //   (state: { initializeProduct: { products: [] } }) =>
+  //     state.initializeProduct.products
+  // );
+
+  const availableProducts = useAppSelector(
+    (state) => state.productSlice.products
   );
 
   const allProducts = availableProducts.map((product: productsType) => (

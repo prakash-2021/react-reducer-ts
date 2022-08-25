@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../redux/store/hooks";
 
 type productsType = {
   buyerInfo: {
@@ -16,15 +16,15 @@ type productsType = {
 };
 
 const Order = () => {
+  // const orderProduct = useSelector(
+  //   (state: {
+  //     orderProducts: {
+  //       products: productsType[];
+  //     };
+  //   }) => state.orderProducts.products
+  // );
 
-  const orderProduct = useSelector(
-    (state: {
-      orderProducts: {
-        products: productsType[];
-      };
-    }) => state.orderProducts.products
-  );
-
+  const orderProduct = useAppSelector((state) => state.orderSlice.products);
 
   return (
     <div className="orders">
@@ -42,7 +42,7 @@ const Order = () => {
                     <th>Quantity</th>
                     <th>Total price (Rs.)</th>
                   </tr>
-                  {obj.product.map((item, idx) => (
+                  {obj.product.map((item: any, idx: number) => (
                     <tr key={idx}>
                       <td>{item.name}</td>
                       <td>{item.quantity}</td>

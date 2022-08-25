@@ -1,17 +1,19 @@
 import React from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useState } from "react";
+import { useAppSelector } from "../redux/store/hooks";
 
 const ViewProduct = () => {
   const navigate = useNavigate();
 
   const { id } = useParams();
 
-  const products = useSelector(
-    (state: any) => state.initializeProduct.products
-  );
+  // const products = useSelector(
+  //   (state: any) => state.initializeProduct.products
+  // );
+
+  const products = useAppSelector((state) => state.productSlice.products);
 
   type Product = {
     name: string;

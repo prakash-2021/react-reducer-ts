@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { loginUP } from "../redux/action/userActions";
+import { userAccout } from "../redux/slice/userAccountSlice";
 
-const Login = () => {
+const Login: Function = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -28,7 +28,7 @@ const Login = () => {
       storedProfile.username === username &&
       storedProfile.password === password
     ) {
-      dispatch(loginUP(storedProfile.username, storedProfile.password));
+      dispatch(userAccout(storedProfile));
       // login();
       return navigate("/");
     } else {

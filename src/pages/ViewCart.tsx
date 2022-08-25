@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import {
-  addToCart,
-  checkOutProduct,
-  increaseQuantity,
-} from "../redux/action/cart";
+import { useAppDispatch, useAppSelector } from "../redux/store/hooks";
+import { checkOutProduct, increaseQuantity } from "../redux/slice/cartSlice";
 
 type productsType = {
   id: string;
@@ -16,21 +12,25 @@ type productsType = {
 };
 
 const ViewCart = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const selectedProductsToCart = useSelector(
-    (state: {
-      productsInCart: {
-        products: productsType[];
-      };
-    }) => state.productsInCart.products
+  // const selectedProductsToCart = useSelector(
+  //   (state: {
+  //     productsInCart: {
+  //       products: productsType[];
+  //     };
+  //   }) => state.productsInCart.products
+  // );
+
+  const selectedProductsToCart = useAppSelector(
+    (state) => state.cartSlice.products
   );
 
   let [productsOfCart, setProductsOfCart] = useState(selectedProductsToCart);
 
   const handleCheckout = () => {
-    dispatch(increaseQuantity(productsOfCart));
+    // dispatch(increaseQuantity(productsOfCart));
     navigate("/stock/viewcart/checkout");
   };
 
@@ -78,7 +78,7 @@ const ViewCart = () => {
       }, 0)
     );
 
-    dispatch(checkOutProduct(productsOfCart, sum));
+    dispatch(checkOutProduct(productsOfCart));
   }, [productsOfCart]);
 
   const displaySelectedProduct = productsOfCart.map((product) => (

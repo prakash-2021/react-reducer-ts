@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../redux/store/hooks";
 import { useState } from "react";
 
 type productsType = {
@@ -38,31 +38,7 @@ const Products = () => {
   };
 
   // stock ma vako array of object
-  const stockProduct = useSelector(
-    (state: { initializeProduct: { products: [] } }) =>
-      state.initializeProduct.products
-  );
-
-  // order gareko array of object
-  const orderProduct = useSelector(
-    (state: {
-      orderProducts: {
-        products: productsType[];
-      };
-    }) => state.orderProducts.products
-  );
-  // console.log("orderProduct ->", orderProduct);
-
-  // const index: number;
-  // const updatedQuantityProducts = orderProduct.map((obj) =>
-  //   obj.product.map((object) => {
-  //     stockProduct.filter((prod: tableRowType) => prod.id === object.id);
-  //   })
-  // );
-
-  // const 
-
-  // console.log("updatedQuantiy ->", updatedQuantityProducts);
+  const stockProduct = useAppSelector((state) => state.productSlice.products);
 
   const addTableRows = stockProduct
     .filter((value: any) => {

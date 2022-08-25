@@ -1,8 +1,8 @@
 import React, { ReactNode } from "react";
 import { useEffect } from "react";
 import { createContext, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { initializeProduct } from "./redux/action/products";
+import { initializeProduct } from "./redux/slice/productSlice";
+import { useAppDispatch} from "./redux/store/hooks";
 
 interface AuthContextInterface {
   login: () => void;
@@ -16,7 +16,7 @@ export const AuthContext =
   createContext<AuthContextInterface>(authContextDefault);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const login = () => localStorage.setItem("isLogin", JSON.stringify(true));
 

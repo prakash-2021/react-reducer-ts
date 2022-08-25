@@ -1,20 +1,22 @@
 import React from "react";
-import { useNavigate, useLocation, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { useState } from "react";
-import { editedProduct } from "../redux/action/products";
+import { editProduct } from "../redux/slice/productSlice";
+import { useAppDispatch, useAppSelector } from "../redux/store/hooks";
 
 const EditProduct = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const { id } = useParams();
 
-  const products = useSelector(
-    (state: { initializeProduct: { products: any } }) =>
-      state.initializeProduct.products
-  );
+  // const products = useSelector(
+  //   (state: { initializeProduct: { products: any } }) =>
+  //     state.initializeProduct.products
+  // );
+
+  const products = useAppSelector(state=>state.productSlice.products)
 
   type Product = {
     name: string;
@@ -49,8 +51,8 @@ const EditProduct = () => {
   }, [productsProperty]);
 
   const handleEdited = () => {
-    const editProduct = { id, name, quantity, price, image };
-    dispatch(editedProduct(editProduct));
+    const editedProduct = { id, name, quantity, price, image };
+    dispatch(editProduct(editedProduct));
     navigate("/product");
   };
 

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
+import { useAppSelector, useAppDispatch } from "../redux/store/hooks";
 import { useNavigate } from "react-router-dom";
-import { increaseQuantity } from "../redux/action/cart";
-import { useDispatch } from "react-redux";
-import orderProduct from "../redux/action/orederAction";
-import { editedProduct } from "../redux/action/products";
+// import { useDispatch } from "react-redux";
+import { orderProduct } from "../redux/slice/orderSlice";
+import { editProduct } from "../redux/slice/productSlice";
+import { increaseQuantity } from "../redux/slice/cartSlice";
+import { useSelector } from "react-redux";
 
 type productsType = {
   id: string;
@@ -15,7 +17,7 @@ type productsType = {
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -23,31 +25,39 @@ const Checkout = () => {
   const [message, setMessage] = useState("");
   const [stockMessage, setStockMessage] = useState("");
 
-  const selectedProductsToCart = useSelector(
-    (state: {
-      productsInCart: {
-        products: productsType[];
-        total: number;
-      };
-    }) => state.productsInCart.products
+  // const selectedProductsToCart = useSelector(
+  //   (state: {
+  //     productsInCart: {
+  //       products: productsType[];
+  //       total: number;
+  //     };
+  //   }) => state.productsInCart.products
+  // );
+
+  const selectedProductsToCart = useAppSelector(
+    (state) => state.cartSlice.products
   );
 
-  const stockProduct = useSelector(
-    (state: { initializeProduct: { products: [] } }) =>
-      state.initializeProduct.products
-  );
+  // const stockProduct = useSelector(
+  // (state: { initializeProduct: { products: [] } }) =>
+  // state.initializeProduct.products
+  // );
+
+  const stockProduct = useAppSelector((state) => state.productSlice.products);
 
   // console.log("stockProduct", stockProduct);
   // console.log("selectedproduct", selectedProductsToCart);
 
-  const totalPrice = useSelector(
-    (state: {
-      productsInCart: {
-        products: productsType[];
-        total: number;
-      };
-    }) => state.productsInCart.total
-  );
+  // const totalPrice = useSelector(
+  // (state: {
+  // productsInCart: {
+  // products: productsType[];
+  // total: number;
+  // };
+  // }) => state.productsInCart.total
+  // );
+
+  const totalPrice = useAppSelector((state) => state.cartSlice.total);
 
   const validateEmail = (email: string) => {
     return email.match(
@@ -71,7 +81,7 @@ const Checkout = () => {
     });
 
     if (!updatedQuantityProduct.includes(undefined)) {
-      dispatch(editedProduct(updatedQuantityProduct));
+      dispatch(editProduct(updatedQuantityProduct));
     }
 
     if (name === "" || phone === "" || !validateEmail(email)) {
@@ -82,7 +92,7 @@ const Checkout = () => {
       const buyerInfo = { name, email, phone };
       localStorage.setItem("selectedProduct", JSON.stringify([]));
       localStorage.setItem("totalQuantity", JSON.stringify(0));
-      dispatch(increaseQuantity([]));
+      // dispatch(increaseQuantity([]));
       const totalInformation = {
         buyerInfo,
         product: selectedProductsToCart,
@@ -124,7 +134,9 @@ const Checkout = () => {
           <h5>Your Bag</h5>
           <div>
             <p>Total</p>
-            <p>Rs. {totalPrice}</p>
+            <p>
+              Rs. <>{totalPrice}</>
+            </p>
           </div>
           <h5 className="mt-20">Items</h5>
           <>
