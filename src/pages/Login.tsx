@@ -25,6 +25,7 @@ const Login: Function = () => {
     ) {
       const profile = { username, password };
       localStorage.setItem("profile", JSON.stringify(profile));
+      login();
       return navigate("/");
     } else if (
       storedProfile.username === username &&
