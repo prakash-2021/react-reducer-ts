@@ -8,7 +8,7 @@ type productsType = {
   name: string;
   price: string;
   quantity: number;
-  image: string;
+  image?: string;
 };
 
 const Stock = () => {
@@ -16,17 +16,11 @@ const Stock = () => {
   const dispatch = useAppDispatch();
 
   const handleLogin = () => navigate("/login");
-  // const prevProductsInCart = JSON.parse(
-  //   localStorage.getItem("selectedProduct") || "[]"
-  // );
 
   const selectedProductsToCart = useAppSelector(
     (state) => state.cartSlice.products
   );
 
-  // const selectedProductsToCart = currentProduct;
-
-  // const totalNum = JSON.parse(localStorage.getItem("totalQuantity") || "0");
   let [totalQuantity, setTotalQuantity] = useState(0);
 
   const handleViewCart = () => {
@@ -51,7 +45,6 @@ const Stock = () => {
     if (index === -1) {
       dispatch(addToCart(product));
     } else {
-      // const newData = selectedProductsToCart[index].quantity + 1;
       dispatch(increaseQuantity(index));
     }
   };
@@ -82,12 +75,6 @@ const Stock = () => {
       </button>
     </div>
   ));
-
-  // setSum(
-  //   totalPrice.reduce((accumulator, value) => {
-  //     return accumulator + value;
-  //   }, 0)
-  // );
 
   return (
     <>

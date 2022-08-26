@@ -1,7 +1,6 @@
 import React from "react";
-import { useSelector } from "react-redux";
 
-const Header: () => JSX.Element = () => {
+const Header = () => {
   const profile: {
     username: string;
   } = JSON.parse(localStorage.getItem("profile") || "{}");

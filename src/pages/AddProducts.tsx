@@ -7,7 +7,7 @@ const AddProducts = () => {
   const [id, setId] = useState("");
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
-  const [quantity, setQuantity] = useState("");
+  const [quantity, setQuantity] = useState(0);
   const [image, setImage] = useState("");
   const [message, setMessage] = useState("");
 
@@ -19,7 +19,7 @@ const AddProducts = () => {
       id === "" ||
       name === "" ||
       price === "" ||
-      quantity === "" ||
+      quantity === 0 ||
       image === ""
     ) {
       setMessage("please input all field properly");
@@ -53,7 +53,10 @@ const AddProducts = () => {
       </div>
       <div className="add-flex">
         <p>Quantity</p>
-        <input type="number" onChange={(e) => setQuantity(e.target.value)} />
+        <input
+          type="number"
+          onChange={(e) => setQuantity(Number(e.target.value))}
+        />
       </div>
       <div className="add-flex">
         <p>Image</p>

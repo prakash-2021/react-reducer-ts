@@ -9,28 +9,30 @@ const EditProduct = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const { id } = useParams();
+  const { id = "" } = useParams();
 
-  const products = useAppSelector(state=>state.productSlice.products)
+  const products = useAppSelector((state) => state.productSlice.products);
 
-  type Product = {
+  type ProductsType = {
+    id: string;
     name: string;
-    quantity: string;
     price: string;
-    image: string;
+    quantity: number;
+    image?: string;
   };
-  const [productsProperty, setProductsProperty] = useState<Product | null>(
-    null
-  );
+
+  const [productsProperty, setProductsProperty] = useState<
+    ProductsType | null | undefined
+  >(null);
   const [name, setName] = useState("");
-  const [quantity, setQuantity] = useState("");
+  const [quantity, setQuantity] = useState(0);
   const [price, setPrice] = useState("");
   const [image, setImage] = useState("");
 
   useEffect(() => {
     if (id) {
       const foundProperty = products.find(
-        (obj: { id: number }) => obj.id.toString() === id
+        (obj: ProductsType) => obj.id.toString() === id
       );
       setProductsProperty(foundProperty);
     }
@@ -41,12 +43,12 @@ const EditProduct = () => {
       setName(productsProperty.name);
       setQuantity(productsProperty.quantity);
       setPrice(productsProperty.price);
-      setImage(productsProperty.image);
+      setImage(productsProperty?.image ?? "");
     }
   }, [productsProperty]);
 
   const handleEdited = () => {
-    const editedProduct = { id, name, quantity, price, image };
+    const editedProduct = { id, name, quantity, price };
     dispatch(editProduct(editedProduct));
     navigate("/product");
   };
@@ -90,7 +92,7 @@ const EditProduct = () => {
           onChange={(e) => {
             if (Number(e.target.value) < 0) {
               e.target.value = "0";
-            } else setQuantity(e.target.value);
+            } else setQuantity(Number(e.target.value));
           }}
         />
       </div>

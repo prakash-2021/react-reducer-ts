@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
-// import { useSelector } from "react-redux";
 import { useAppSelector, useAppDispatch } from "../redux/store/hooks";
 import { useNavigate } from "react-router-dom";
-// import { useDispatch } from "react-redux";
 import { orderProduct } from "../redux/slice/orderSlice";
-import { decreaseQuantity, editProduct } from "../redux/slice/productSlice";
-import { checkOutProduct, increaseQuantity } from "../redux/slice/cartSlice";
-import { useSelector } from "react-redux";
+import { updateQuantity } from "../redux/slice/productSlice";
+import { checkOutProduct } from "../redux/slice/cartSlice";
 
 type productsType = {
   id: string;
@@ -23,8 +20,7 @@ const Checkout = () => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
-  const [stockMessage, setStockMessage] = useState("");
-  const [isnotEnough, setIsnotEnough] = useState(false);
+  const [stockMessage, setStockMessage] = useState<string[]>([]);
 
   const { products: cartProducts, total: totalPrice } = useAppSelector(
     (state) => state.cartSlice
@@ -38,50 +34,36 @@ const Checkout = () => {
     );
   };
 
-  useEffect(() => {
-    if (stockMessage !== "") setIsnotEnough(true);
-  }, [setStockMessage]);
-
   const handleOrder = () => {
-    // decrease quantity count of above ordered items from stock
+    cartProducts.forEach((cart) => {
+      const index = stockProduct.findIndex((stock) => stock.id === cart.id);
+      if (index >= 0) {
+        const { name, quantity } = stockProduct[index];
 
-    const updatedQuantityProduct = stockProduct.map((obj: productsType) => {
-      if (obj.id === cartProducts[0].id) {
-        if (obj.quantity < cartProducts[0].quantity) {
-          setStockMessage("out of stock");
+        if (cart.quantity > quantity) {
+          setStockMessage((prevMessage) => [...prevMessage, name]);
         } else {
-          setStockMessage("");
-          const data = { id: obj.id, quantity: cartProducts[0].quantity };
-          dispatch(decreaseQuantity(data));
+          const info = { index, quantity: cart.quantity };
+          dispatch(updateQuantity(info));
+
+          if (name === "" || phone === "" || !validateEmail(email)) {
+            setMessage("please fill your details");
+          } else if (setStockMessage.length < 1) {
+            const buyerInfo = { name, email, phone };
+            localStorage.setItem("selectedProduct", JSON.stringify([]));
+            localStorage.setItem("totalQuantity", JSON.stringify(0));
+            dispatch(checkOutProduct([]));
+            const totalInformation = {
+              buyerInfo,
+              product: cartProducts,
+            };
+            dispatch(orderProduct(totalInformation));
+            navigate("/stock");
+            alert("Ordered Successfully");
+          }
         }
-      } else {
-        return obj;
       }
     });
-
-    if (!updatedQuantityProduct.includes(undefined)) {
-      dispatch(editProduct(updatedQuantityProduct));
-    }
-
-    // save new customer order in store
-
-    if (isnotEnough === true) {
-      setStockMessage("out of stock");
-    } else if (name === "" || phone === "" || !validateEmail(email)) {
-      setMessage("please fill your details");
-    } else {
-      const buyerInfo = { name, email, phone };
-      localStorage.setItem("selectedProduct", JSON.stringify([]));
-      localStorage.setItem("totalQuantity", JSON.stringify(0));
-      dispatch(checkOutProduct([]));
-      const totalInformation = {
-        buyerInfo,
-        product: cartProducts,
-      };
-      dispatch(orderProduct(totalInformation));
-      navigate("/stock");
-      alert("Ordered Successfully");
-    }
   };
 
   return (
@@ -133,7 +115,11 @@ const Checkout = () => {
         <span>Order</span>
       </button>
       <p className="color-red text-center">
-        <i>{stockMessage}</i>
+        <i>
+          {stockMessage.map((msg, idx) => (
+            <p key={idx}>{msg} is out of stock</p>
+          ))}
+        </i>
       </p>
     </>
   );

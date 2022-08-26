@@ -1,29 +1,7 @@
 import React, { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../redux/store/hooks";
 
-type productsType = {
-  buyerInfo: {
-    name: string;
-    email: string;
-    phone: string;
-  };
-  product: {
-    id: string;
-    name: string;
-    price: string;
-    quantity: number;
-  }[];
-};
-
 const Order = () => {
-  // const orderProduct = useSelector(
-  //   (state: {
-  //     orderProducts: {
-  //       products: productsType[];
-  //     };
-  //   }) => state.orderProducts.products
-  // );
-
   const orderProduct = useAppSelector((state) => state.orderSlice.products);
 
   return (

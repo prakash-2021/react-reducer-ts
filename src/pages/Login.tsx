@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { userAccout } from "../redux/slice/userAccountSlice";
+import { AuthContext } from "../AuthContext";
 
 const Login: Function = () => {
   const dispatch = useDispatch();
@@ -10,6 +11,7 @@ const Login: Function = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const { login } = useContext(AuthContext);
 
   const storedProfile: {
     username: string;
@@ -29,7 +31,7 @@ const Login: Function = () => {
       storedProfile.password === password
     ) {
       dispatch(userAccout(storedProfile));
-      // login();
+      login();
       return navigate("/");
     } else {
       setErrorMessage("please type correct username and password");

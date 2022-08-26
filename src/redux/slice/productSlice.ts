@@ -1,6 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-const initialState: { products: any[] } = {
+type ProductsType = {
+  id: string;
+  name: string;
+  price: string;
+  quantity: number;
+};
+
+const initialState: { products: ProductsType[] } = {
   products: [],
 };
 
@@ -8,32 +15,28 @@ const initializeProductSlice = createSlice({
   name: "initializeProduct",
   initialState,
   reducers: {
-    initializeProduct: (state, action: PayloadAction<any>) => {
+    initializeProduct: (state, action: PayloadAction<ProductsType[]>) => {
       state.products = action.payload;
     },
-    addProduct: (state, action: PayloadAction<any>) => {
+    addProduct: (state, action: PayloadAction<ProductsType>) => {
       state.products = [...state.products, action.payload];
     },
-    editProduct: (state, action: PayloadAction<any>) => {
+    editProduct: (state, action: PayloadAction<ProductsType>) => {
       const index = state.products.findIndex(
         (obj: { id: string }) => obj.id === action.payload.id
       );
       state.products[index] = action.payload;
       state.products = state.products;
     },
-    decreaseQuantity: (
+    updateQuantity: (
       state,
-      action: PayloadAction<{ id: string; quantity: number }>
+      action: PayloadAction<{ index: number; quantity: number }>
     ) => {
-      const index = state.products.findIndex(
-        (obj: { id: string }) => obj.id === action.payload.id
-      );
-      state.products[index].quantity -= action.payload.quantity;
-      state.products = state.products;
+      state.products[action.payload.index].quantity -= action.payload.quantity;
     },
   },
 });
 
 export default initializeProductSlice.reducer;
-export const { initializeProduct, addProduct, editProduct, decreaseQuantity } =
+export const { initializeProduct, addProduct, editProduct, updateQuantity } =
   initializeProductSlice.actions;

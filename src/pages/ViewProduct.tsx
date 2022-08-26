@@ -9,22 +9,19 @@ const ViewProduct = () => {
 
   const { id } = useParams();
 
-  // const products = useSelector(
-  //   (state: any) => state.initializeProduct.products
-  // );
-
   const products = useAppSelector((state) => state.productSlice.products);
 
   type Product = {
+    id: string;
     name: string;
-    quantity: string;
+    quantity: number;
     price: string;
-    image: string;
+    image?: string;
   };
 
-  const [productsProperty, setProductsProperty] = useState<Product | null>(
-    null
-  );
+  const [productsProperty, setProductsProperty] = useState<
+    Product | null | undefined
+  >(null);
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState("");
   const [price, setPrice] = useState("");
@@ -32,9 +29,7 @@ const ViewProduct = () => {
 
   useEffect(() => {
     if (id) {
-      const foundProperty = products.find(
-        (obj: any) => obj.id.toString() === id
-      );
+      const foundProperty = products.find((obj) => obj.id.toString() === id);
       setProductsProperty(foundProperty);
     }
   }, [id, products]);
@@ -42,9 +37,9 @@ const ViewProduct = () => {
   useEffect(() => {
     if (productsProperty) {
       setName(productsProperty.name);
-      setQuantity(productsProperty.quantity);
+      setQuantity(productsProperty.quantity.toString());
       setPrice(productsProperty.price);
-      setImage(productsProperty.image);
+      setImage(productsProperty?.image ?? "");
     }
   }, [productsProperty]);
 

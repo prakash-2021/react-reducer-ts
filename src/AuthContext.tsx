@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 import { useEffect } from "react";
 import { createContext, useState } from "react";
 import { initializeProduct } from "./redux/slice/productSlice";
-import { useAppDispatch} from "./redux/store/hooks";
+import { useAppDispatch } from "./redux/store/hooks";
 
 interface AuthContextInterface {
   login: () => void;
@@ -23,7 +23,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => localStorage.setItem("isLogin", JSON.stringify(false));
 
   useEffect(() => {
-    // setLoggedIn((loggedIn = JSON.parse(localStorage.getItem("isLogin"))));
     let tableInformation = JSON.parse(
       localStorage.getItem("storedData") || "[]"
     );

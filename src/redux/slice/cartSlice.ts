@@ -7,17 +7,11 @@ type ProductsType = {
   quantity: number;
 };
 
-interface Product {
-  id: string;
-  name: string;
-  quantity: number;
-}
-
 const prevProductsInCart = JSON.parse(
   localStorage.getItem("selectedProduct") || "[]"
 );
 
-const initialState: { products: any[]; total: number } = {
+const initialState: { products: ProductsType[]; total: number } = {
   products: prevProductsInCart,
   total: 0,
 };
@@ -26,7 +20,7 @@ const productsInCartSlice = createSlice({
   name: "productsInCartSlice",
   initialState,
   reducers: {
-    addToCart: (state, action: PayloadAction<Product>) => {
+    addToCart: (state, action: PayloadAction<ProductsType>) => {
       state.products = [...state.products, action.payload];
       localStorage.setItem("selectedProduct", JSON.stringify(state.products));
     },

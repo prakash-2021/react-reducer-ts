@@ -1,21 +1,7 @@
 import React from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../redux/store/hooks";
+import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../redux/store/hooks";
 import { useState } from "react";
-
-type productsType = {
-  buyerInfo: {
-    name: string;
-    email: string;
-    phone: string;
-  };
-  product: {
-    id: string;
-    name: string;
-    price: string;
-    quantity: number;
-  }[];
-};
 
 type tableRowType = {
   id: string;

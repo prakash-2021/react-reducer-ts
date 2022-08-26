@@ -1,19 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../redux/store/hooks";
-import {
-  checkOutProduct,
-  increaseQuantity,
-  totalQuantity,
-} from "../redux/slice/cartSlice";
-
-type productsType = {
-  id: string;
-  name: string;
-  price: string;
-  quantity: number;
-  total: number;
-};
+import { checkOutProduct, totalQuantity } from "../redux/slice/cartSlice";
 
 const ViewCart = () => {
   const dispatch = useAppDispatch();
@@ -93,7 +81,6 @@ const ViewCart = () => {
         </button>
         <input
           type="number"
-          // defaultValue={product.quantity}
           value={product.quantity}
           className="view-cart__input"
           readOnly
