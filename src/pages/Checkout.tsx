@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { increaseQuantity } from "../redux/action/cart";
 import { useDispatch } from "react-redux";
 import orderProduct from "../redux/action/orederAction";
-import { editedProduct } from "../redux/action/products";
+import { editedProduct, initializeProduct } from "../redux/action/products";
 
 type productsType = {
   id: string;
@@ -21,7 +21,7 @@ const Checkout = () => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
-  const [stockMessage, setStockMessage] = useState("");
+  const [stockMessage, setStockMessage] = useState<string[]>([]);
 
   const selectedProductsToCart = useSelector(
     (state: {
@@ -32,13 +32,10 @@ const Checkout = () => {
     }) => state.productsInCart.products
   );
 
-  const stockProduct = useSelector(
+  const stockProduct: productsType[] = useSelector(
     (state: { initializeProduct: { products: [] } }) =>
       state.initializeProduct.products
   );
-
-  // console.log("stockProduct", stockProduct);
-  // console.log("selectedproduct", selectedProductsToCart);
 
   const totalPrice = useSelector(
     (state: {
@@ -56,42 +53,59 @@ const Checkout = () => {
   };
 
   const handleOrder = () => {
-    const updatedQuantityProduct = stockProduct.map((obj: productsType) => {
-      if (obj.id === selectedProductsToCart[0].id) {
-        if (obj.quantity < selectedProductsToCart[0].quantity) {
-          console.log(obj.quantity, selectedProductsToCart[0].quantity);
-          setStockMessage("out of stock");
+    selectedProductsToCart.forEach((cart) => {
+      const index = stockProduct.findIndex(
+        (stock: productsType) => stock.id === cart.id
+      );
+      const info = { index, quantity: cart.quantity };
+      if (index >= 0) {
+        const { name, quantity } = stockProduct[index];
+
+        if (cart.quantity > quantity) {
+          setStockMessage((prevMessage) => [...prevMessage, name]);
         } else {
-          setStockMessage("");
-          return (obj.quantity -= selectedProductsToCart[0].quantity);
+          if (name === "" || phone === "" || !validateEmail(email)) {
+            setMessage("please fill your details");
+          } else {
+            console.log("haha");
+            const buyerInfo = { name, email, phone };
+            localStorage.setItem("selectedProduct", JSON.stringify([]));
+            localStorage.setItem("totalQuantity", JSON.stringify(0));
+            dispatch(increaseQuantity([]));
+            const totalInformation = {
+              buyerInfo,
+              product: selectedProductsToCart,
+            };
+
+            stockProduct[index].quantity -= cart.quantity;
+            dispatch(initializeProduct(stockProduct));
+
+            dispatch(orderProduct(totalInformation));
+            navigate("/stock");
+            alert("Ordered Successfully");
+          }
         }
-      } else {
-        return obj;
       }
     });
-
-    if (!updatedQuantityProduct.includes(undefined)) {
-      dispatch(editedProduct(updatedQuantityProduct));
-    }
-
-    if (name === "" || phone === "" || !validateEmail(email)) {
-      setMessage("please fill your details");
-    } else if (stockMessage !== "") {
-      setStockMessage("out of stock");
-    } else {
-      const buyerInfo = { name, email, phone };
-      localStorage.setItem("selectedProduct", JSON.stringify([]));
-      localStorage.setItem("totalQuantity", JSON.stringify(0));
-      dispatch(increaseQuantity([]));
-      const totalInformation = {
-        buyerInfo,
-        product: selectedProductsToCart,
-      };
-      dispatch(orderProduct(totalInformation));
-      navigate("/stock");
-      alert("Ordered Successfully");
-    }
   };
+
+  // const handleOrder = () => {
+  //   selectedProductsToCart.forEach((cart) => {
+  //     const index = stockProduct.findIndex(
+  //       (stock: productsType) => stock.id === cart.id
+  //     );
+  //     if (index >= 0) {
+  //       const { name, quantity } = stockProduct[index];
+
+  //       if (cart.quantity > quantity) {
+  //         setStockMessage((prevMessage) => [...prevMessage, name]);
+  //       } else {
+  //         const info = { index, quantity: cart.quantity };
+  //         // dispatch(updateQuantity(info));
+  //       }
+  //     }
+  //   });
+  // };
 
   return (
     <>
@@ -140,7 +154,11 @@ const Checkout = () => {
         <span>Order</span>
       </button>
       <p className="color-red text-center">
-        <i>{stockMessage}</i>
+        <>
+          {stockMessage.map((productName, id) => {
+            <i key={id}>{productName} is out of stock</i>;
+          })}
+        </>
       </p>
     </>
   );
